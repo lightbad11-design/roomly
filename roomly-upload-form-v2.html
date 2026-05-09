@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roomly — ส่งรูปสินค้า</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm: #ede8de;
+    --border: #d4cec2;
+    --border2: #b8b0a0;
+    --text1: #2a2520;
+    --text2: #6b6258;
+    --text3: #a89f94;
+    --accent: #8b6914;
+    --accent-light: #c49a2a;
+    --accent-bg: #fdf6e3;
+    --green: #3a7d44;
+    --green-bg: #f0f7f1;
+    --red: #c0392b;
+    --red-bg: #fdf0ee;
+    --shadow: 0 2px 12px rgba(42,37,32,0.08);
+    --shadow-lg: 0 8px 32px rgba(42,37,32,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--text1);
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 18px;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--text1);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--accent-light); }
+  .header-sub { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.05em; }
+
+  /* Hero */
+  .hero {
+    background: var(--text1);
+    padding: 40px 32px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    background: var(--cream);
+    border-radius: 40px 40px 0 0;
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(196,154,42,0.15);
+    border: 1px solid rgba(196,154,42,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent-light);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--cream);
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent-light); }
+  .hero p { font-size: 17px; color: var(--text3); line-height: 1.8; }
+
+  /* Steps bar */
+  .steps-bar {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 32px 0;
+    display: flex;
+    gap: 0;
+    align-items: center;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text3);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .step-item.active .step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step-item.done .step-num { background: var(--green); border-color: var(--green); color: #fff; }
+  .step-label { font-size: 12px; color: var(--text3); }
+  .step-item.active .step-label { color: var(--text1); font-weight: 500; }
+  .step-connector { flex: 1; height: 1px; background: var(--border); margin: 0 8px; }
+
+  /* Main form */
+  .form-wrap {
+    max-width: 680px;
+    margin: 32px auto 0;
+    padding: 0 32px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.4s ease forwards;
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  @keyframes slideUp { to { opacity: 1; transform: none; } }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text1);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--warm);
+  }
+  .card-title-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Form fields */
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  label .req { color: var(--red); margin-left: 2px; }
+  label .hint { font-weight: 400; color: var(--text3); font-size: 11px; margin-left: 6px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: 'Noto Serif Thai', serif;
+    color: var(--text1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(139,105,20,0.08);
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6258' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+  /* Item counter */
+  .item-counter {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--warm);
+  }
+  .counter-btn {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--text2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .counter-btn:hover { background: var(--border); }
+  .counter-val {
+    min-width: 48px;
+    text-align: center;
+    font-size: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    color: var(--text1);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    height: 40px;
+    line-height: 40px;
+  }
+
+  /* Item sections */
+  .items-container { display: flex; flex-direction: column; gap: 20px; }
+
+  .item-card {
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .item-card.complete { border-color: var(--green); }
+
+  .item-header {
+    background: var(--text1);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .item-header-left { display: flex; align-items: center; gap: 10px; }
+  .item-badge {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .item-name-preview { font-size: 13px; color: var(--cream); font-weight: 500; }
+  .item-status {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    color: var(--text3);
+  }
+  .item-status.ok { background: rgba(58,125,68,0.25); color: #7dca8a; }
+
+  .item-body { padding: 18px; }
+  .item-body .field { margin-bottom: 14px; }
+
+  /* Upload zones */
+  .upload-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .upload-slot {
+    aspect-ratio: 1;
+    border: 2px dashed var(--border2);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+  }
+  .upload-slot:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .upload-slot.filled { border-style: solid; border-color: var(--green); }
+  .upload-slot.required-slot { border-color: var(--accent-light); }
+
+  .slot-icon { font-size: 20px; }
+  .slot-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-align: center;
+    line-height: 1.4;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .upload-slot.filled .slot-label { color: var(--green); }
+
+  .slot-req-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .slot-ok-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--green);
+    color: #fff;
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slot-preview {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  .slot-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .upload-slot.filled:hover .slot-overlay { display: flex; }
+  .overlay-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text1);
+    font-family: 'Noto Serif Thai', serif;
+  }
+
+  input[type="file"] { display: none; }
+
+  /* Angle guide */
+  .angle-guide {
+    background: var(--accent-bg);
+    border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .guide-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .guide-text { font-size: 11px; color: var(--accent); line-height: 1.6; }
+  .guide-text strong { font-weight: 600; }
+
+  /* Resolution warning */
+  .res-warning {
+    display: none;
+    background: var(--red-bg);
+    border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 8px;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .res-warning.show { display: flex; }
+
+  /* Progress indicator per item */
+  .item-progress {
+    display: flex;
+    gap: 4px;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .prog-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .prog-dot.filled { background: var(--green); }
+  .prog-dot.required { background: var(--border2); }
+  .prog-label { font-size: 10px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-left: 6px; }
+
+  /* Submit section */
+  .submit-card {
+    background: var(--text1);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-lg);
+  }
+  .submit-summary { margin-bottom: 20px; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { color: var(--text3); }
+  .summary-val { color: var(--cream); font-weight: 500; }
+  .summary-val.ok { color: #7dca8a; }
+  .summary-val.warn { color: var(--accent-light); }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 15px;
+    font-family: 'Noto Serif Thai', serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+  }
+  .submit-btn:hover { background: #7a5c12; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,105,20,0.35); }
+  .submit-btn:active { transform: none; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .submit-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 32px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .success-screen.show { display: block; }
+  .success-icon { font-size: 56px; margin-bottom: 20px; }
+  .success-title { font-size: 22px; font-weight: 500; color: var(--text1); margin-bottom: 10px; }
+  .success-sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+  .job-id-box {
+    background: var(--text1);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
+  .job-id-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+  .job-id-val { font-size: 16px; color: var(--accent-light); font-weight: 500; letter-spacing: 0.05em; }
+
+  /* Divider */
+  .section-label {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="logo">room<span>ly</span></div>
+  <div class="header-sub">3D Model Service</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">📦 ส่งสินค้าเพื่อสร้างโมเดล 3D</div>
+    <h1>อัปโหลดรูปสินค้า<br>เพื่อสร้าง <em>โมเดล 3D</em></h1>
+    <p>กรุณากรอกข้อมูลและอัปโหลดรูปสินค้าของคุณให้ครบทุกมุม เพื่อให้ทีมงานสร้างโมเดล 3D ที่มีคุณภาพสูงสุด</p>
+  </div>
+</div>
+
+<!-- Progress steps -->
+<div class="steps-bar">
+  <div class="step-item done" id="step1">
+    <div class="step-num">✓</div>
+    <div class="step-label">ชำระเงิน</div>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step-item active" id="step2">
+    <div class="step-num">2</div>
+    <div class="step-label">ส่งรูปสินค้า</div>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step-item" id="step3">
+    <div class="step-num">3</div>
+    <div class="step-label">รอผล 3D</div>
+  </div>
+</div>
+
+<div class="form-wrap" id="mainForm">
+
+  <!-- Customer info -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-title-icon">👤</div>
+      ข้อมูลผู้สั่ง
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+        <input type="text" id="customerName" placeholder="สมชาย ใจดี" required>
+      </div>
+      <div class="field">
+        <label>เบอร์โทรศัพท์ <span class="req">*</span></label>
+        <input type="tel" id="customerPhone" placeholder="08X-XXX-XXXX" required>
+      </div>
+    </div>
+    <div class="field">
+      <label>อีเมล <span class="req">*</span> <span class="hint">ใช้รับผลโมเดล 3D</span></label>
+      <input type="email" id="customerEmail" placeholder="example@email.com" required>
+    </div>
+    <div class="field">
+      <label>หมายเลขอ้างอิงการชำระเงิน <span class="req">*</span> <span class="hint">เลขที่โอน / สลิป ref</span></label>
+      <input type="text" id="paymentRef" placeholder="เช่น 202505071234" required>
+    </div>
+  </div>
+
+  <!-- Item count -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-title-icon">🪑</div>
+      จำนวนชิ้นงาน
+    </div>
+    <div class="field">
+      <label>ต้องการสร้างโมเดล 3D กี่ชิ้น <span class="req">*</span></label>
+      <div style="display:flex; align-items:center; gap:16px; margin-top:4px;">
+        <div class="item-counter">
+          <button class="counter-btn" onclick="changeCount(-1)">−</button>
+          <div class="counter-val" id="itemCount">1</div>
+          <button class="counter-btn" onclick="changeCount(1)">+</button>
+        </div>
+        <div style="font-size:12px; color:var(--text3); line-height:1.5;">
+          สูงสุด 10 ชิ้นต่อครั้ง<br>
+          <span style="color:var(--accent); font-size:11px;">แต่ละชิ้นต้องอัปโหลดรูปแยกกัน</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic item sections -->
+  <div class="section-label">รูปภาพแต่ละชิ้นงาน</div>
+  <div class="items-container" id="itemsContainer"></div>
+
+  <!-- Submit -->
+  <div class="submit-card" id="submitCard">
+    <div class="submit-summary" id="submitSummary">
+      <div class="summary-row">
+        <span class="summary-label">ชื่อผู้สั่ง</span>
+        <span class="summary-val" id="sumName">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">จำนวนชิ้นงาน</span>
+        <span class="summary-val" id="sumCount">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">รูปทั้งหมด</span>
+        <span class="summary-val" id="sumPhotos">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">สถานะ</span>
+        <span class="summary-val" id="sumStatus">—</span>
+      </div>
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+      📤 ส่งรูปสินค้า
+    </button>
+    <div class="submit-note">ข้อมูลของคุณจะถูกส่งให้ทีมงาน Roomly โดยตรง<br>จะได้รับอีเมลยืนยันภายใน 15 นาที</div>
+  </div>
+
+</div>
+
+<!-- Success screen -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">ส่งรูปสินค้าเรียบร้อย!</div>
+  <div class="success-sub">ทีมงาน Roomly ได้รับข้อมูลของคุณแล้ว<br>เราจะเริ่มสร้างโมเดล 3D และแจ้งผลทางอีเมลของคุณ</div>
+  <div class="job-id-box">
+    <div class="job-id-label">หมายเลขงาน (Job ID)</div>
+    <div class="job-id-val" id="jobIdDisplay">—</div>
+  </div>
+  <div style="margin-top:20px; font-size:12px; color:var(--text3);">เก็บหมายเลขงานนี้ไว้สำหรับติดตามสถานะ</div>
+</div>
+
+<script>
+  const ANGLE_SLOTS = [
+    { key: 'front',      label: 'ด้านหน้า',     icon: '⬜', required: true },
+    { key: 'side',       label: 'ด้านข้าง',     icon: '◻️', required: true },
+    { key: 'iso',        label: 'มุม 45°',      icon: '🔷', required: true },
+    { key: 'back',       label: 'ด้านหลัง',     icon: '⬛', required: false },
+    { key: 'top',        label: 'มองจากบน',     icon: '🔲', required: false },
+    { key: 'detail',     label: 'ใกล้ชิ้ด วัสดุ',icon: '🔍', required: false },
+  ];
+
+  let itemCount = 1;
+  let itemData = {}; // { itemIdx: { name, type, note, slots: { front: File, ... } } }
+
+  function changeCount(delta) {
+    const next = Math.max(1, Math.min(10, itemCount + delta));
+    if (next === itemCount) return;
+    itemCount = next;
+    document.getElementById('itemCount').textContent = itemCount;
+    renderItems();
+    updateSummary();
+  }
+
+  function renderItems() {
+    const container = document.getElementById('itemsContainer');
+    container.innerHTML = '';
+    for (let i = 0; i < itemCount; i++) {
+      if (!itemData[i]) itemData[i] = { name: '', type: '', note: '', slots: {} };
+      container.appendChild(buildItemCard(i));
+    }
+    // remove stale items
+    Object.keys(itemData).forEach(k => { if (+k >= itemCount) delete itemData[k]; });
+  }
+
+  function buildItemCard(i) {
+    const d = itemData[i];
+    const div = document.createElement('div');
+    div.className = 'item-card' + (isItemComplete(i) ? ' complete' : '');
+    div.id = `item-card-${i}`;
+
+    const filled = Object.keys(d.slots).length;
+    const reqFilled = ANGLE_SLOTS.filter(s => s.required && d.slots[s.key]).length;
+
+    div.innerHTML = `
+      <div class="item-header">
+        <div class="item-header-left">
+          <div class="item-badge">ชิ้นที่ ${i+1}</div>
+          <div class="item-name-preview" id="namePreview-${i}">${d.name || 'ยังไม่ระบุชื่อ'}</div>
+        </div>
+        <div class="item-status ${isItemComplete(i) ? 'ok' : ''}">${isItemComplete(i) ? '✓ พร้อม' : `${filled}/6 รูป`}</div>
+      </div>
+      <div class="item-body">
+        <div class="field-row">
+          <div class="field">
+            <label>ชื่อสินค้า / ชิ้นงาน <span class="req">*</span></label>
+            <input type="text" placeholder="เช่น โซฟา L-Shape สีครีม"
+              value="${d.name}"
+              oninput="itemData[${i}].name=this.value; document.getElementById('namePreview-${i}').textContent=this.value||'ยังไม่ระบุชื่อ'; checkComplete(${i}); updateSummary()">
+          </div>
+          <div class="field">
+            <label>ประเภทสินค้า <span class="req">*</span></label>
+            <select onchange="itemData[${i}].type=this.value; checkComplete(${i})">
+              <option value="">เลือกประเภท...</option>
+              <option ${d.type==='sofa'?'selected':''} value="sofa">โซฟา</option>
+              <option ${d.type==='chair'?'selected':''} value="chair">เก้าอี้</option>
+              <option ${d.type==='table'?'selected':''} value="table">โต๊ะ</option>
+              <option ${d.type==='bed'?'selected':''} value="bed">เตียง</option>
+              <option ${d.type==='cabinet'?'selected':''} value="cabinet">ตู้ / ชั้นวาง</option>
+              <option ${d.type==='lamp'?'selected':''} value="lamp">โคม / ไฟ</option>
+              <option ${d.type==='decor'?'selected':''} value="decor">ของตกแต่ง</option>
+              <option ${d.type==='other'?'selected':''} value="other">อื่นๆ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>หมายเหตุ <span class="hint">วัสดุ สี หรือรายละเอียดพิเศษ</span></label>
+          <textarea placeholder="เช่น โครงไม้สักแท้ เบาะผ้าลินิน สีเทาอ่อน ขนาด 220×150 ซม."
+            oninput="itemData[${i}].note=this.value">${d.note}</textarea>
+        </div>
+
+        <div class="field">
+          <div class="angle-guide">
+            <div class="guide-icon">💡</div>
+            <div class="guide-text">
+              <strong>ต้องการอย่างน้อย 3 มุม (★)</strong> ได้แก่ ด้านหน้า, ด้านข้าง และมุม 45°<br>
+              ถ่ายจากกล้องมือถือโดยตรง ความละเอียดไม่ต่ำกว่า 2MP · ห้าม screenshot หรือรูปจากเว็บ
+            </div>
+          </div>
+          <label>อัปโหลดรูปตามมุมที่กำหนด</label>
+          <div class="upload-grid" id="grid-${i}">
+            ${ANGLE_SLOTS.map(s => buildSlotHTML(i, s)).join('')}
+          </div>
+          <div class="res-warning" id="resWarn-${i}">
+            <span>⚠️</span>
+            <span id="resWarnText-${i}"></span>
+          </div>
+          <div class="item-progress">
+            ${ANGLE_SLOTS.map(s => `<div class="prog-dot ${d.slots[s.key]?'filled':''} ${s.required?'required':''}" id="prog-${i}-${s.key}"></div>`).join('')}
+            <div class="prog-label" id="progLabel-${i}">${filled} / 6 รูป · ${reqFilled}/3 มุมบังคับ</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // attach file inputs after DOM insert
+    setTimeout(() => attachFileInputs(i), 0);
+    return div;
+  }
+
+  function buildSlotHTML(i, s) {
+    const d = itemData[i];
+    const hasPrev = d.slots[s.key];
+    return `
+      <div class="upload-slot ${hasPrev?'filled':''} ${s.required?'required-slot':''}"
+           id="slot-${i}-${s.key}"
+           onclick="triggerUpload(${i},'${s.key}')">
+        ${!hasPrev ? `<span class="slot-icon">${s.icon}</span>` : ''}
+        ${!hasPrev ? `<span class="slot-label">${s.label}${s.required?' ★':''}</span>` : ''}
+        ${hasPrev ? `<img class="slot-preview" id="preview-${i}-${s.key}" src="${URL.createObjectURL(d.slots[s.key])}">` : ''}
+        ${s.required && !hasPrev ? '<span class="slot-req-badge">★ จำเป็น</span>' : ''}
+        ${hasPrev ? '<span class="slot-ok-badge">✓</span>' : ''}
+        <div class="slot-overlay">
+          <button class="overlay-btn" onclick="event.stopPropagation(); removeSlot(${i},'${s.key}')">ลบ</button>
+          <button class="overlay-btn" onclick="event.stopPropagation(); triggerUpload(${i},'${s.key}')">เปลี่ยน</button>
+        </div>
+        <input type="file" id="file-${i}-${s.key}" accept="image/*" onchange="handleFile(${i},'${s.key}',this)">
+      </div>
+    `;
+  }
+
+  function attachFileInputs(i) {
+    ANGLE_SLOTS.forEach(s => {
+      const inp = document.getElementById(`file-${i}-${s.key}`);
+      if (inp) inp.onchange = function() { handleFile(i, s.key, this); };
+    });
+  }
+
+  function triggerUpload(i, key) {
+    const inp = document.getElementById(`file-${i}-${key}`);
+    if (inp) inp.click();
+  }
+
+  function handleFile(i, key, input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+
+    // Check resolution via Image
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = function() {
+      const mp = (img.width * img.height) / 1000000;
+      const warn = document.getElementById(`resWarn-${i}`);
+      const warnText = document.getElementById(`resWarnText-${i}`);
+
+      if (mp < 2) {
+        warnText.textContent = `รูป "${file.name}" มีความละเอียดต่ำเกินไป (${mp.toFixed(1)} MP) ต้องการอย่างน้อย 2 MP — กรุณาส่งรูปจากกล้องโดยตรง`;
+        warn.classList.add('show');
+        URL.revokeObjectURL(url);
+        return;
+      }
+      warn.classList.remove('show');
+      URL.revokeObjectURL(url);
+
+      itemData[i].slots[key] = file;
+      refreshSlot(i, key, file);
+      checkComplete(i);
+      updateSummary();
+    };
+    img.src = url;
+  }
+
+  function refreshSlot(i, key, file) {
+    const slot = document.getElementById(`slot-${i}-${key}`);
+    const s = ANGLE_SLOTS.find(x => x.key === key);
+    const imgUrl = URL.createObjectURL(file);
+    slot.className = 'upload-slot filled' + (s.required ? ' required-slot' : '');
+    slot.innerHTML = `
+      <img class="slot-preview" src="${imgUrl}">
+      <span class="slot-ok-badge">✓</span>
+      <div class="slot-overlay">
+        <button class="overlay-btn" onclick="event.stopPropagation(); removeSlot(${i},'${key}')">ลบ</button>
+        <button class="overlay-btn" onclick="event.stopPropagation(); triggerUpload(${i},'${key}')">เปลี่ยน</button>
+      </div>
+      <input type="file" id="file-${i}-${key}" accept="image/*">
+    `;
+    document.getElementById(`file-${i}-${key}`).onchange = function() { handleFile(i, key, this); };
+
+    // update progress dots
+    const dot = document.getElementById(`prog-${i}-${key}`);
+    if (dot) dot.classList.add('filled');
+    updateProgLabel(i);
+  }
+
+  function removeSlot(i, key) {
+    delete itemData[i].slots[key];
+    // re-render just this slot
+    const s = ANGLE_SLOTS.find(x => x.key === key);
+    const slot = document.getElementById(`slot-${i}-${key}`);
+    slot.className = 'upload-slot' + (s.required ? ' required-slot' : '');
+    slot.innerHTML = `
+      <span class="slot-icon">${s.icon}</span>
+      <span class="slot-label">${s.label}${s.required?' ★':''}</span>
+      ${s.required ? '<span class="slot-req-badge">★ จำเป็น</span>' : ''}
+      <input type="file" id="file-${i}-${key}" accept="image/*">
+    `;
+    document.getElementById(`file-${i}-${key}`).onchange = function() { handleFile(i, key, this); };
+    const dot = document.getElementById(`prog-${i}-${key}`);
+    if (dot) dot.classList.remove('filled');
+    updateProgLabel(i);
+    checkComplete(i);
+    updateSummary();
+  }
+
+  function updateProgLabel(i) {
+    const d = itemData[i];
+    const filled = Object.keys(d.slots).length;
+    const reqFilled = ANGLE_SLOTS.filter(s => s.required && d.slots[s.key]).length;
+    const lbl = document.getElementById(`progLabel-${i}`);
+    if (lbl) lbl.textContent = `${filled} / 6 รูป · ${reqFilled}/3 มุมบังคับ`;
+  }
+
+  function isItemComplete(i) {
+    const d = itemData[i];
+    if (!d) return false;
+    const hasName = d.name.trim().length > 0;
+    const hasType = d.type.length > 0;
+    const reqOk = ANGLE_SLOTS.filter(s => s.required).every(s => d.slots[s.key]);
+    return hasName && hasType && reqOk;
+  }
+
+  function checkComplete(i) {
+    const card = document.getElementById(`item-card-${i}`);
+    if (!card) return;
+    const complete = isItemComplete(i);
+    card.className = 'item-card' + (complete ? ' complete' : '');
+    const statusEl = card.querySelector('.item-status');
+    if (statusEl) {
+      statusEl.className = 'item-status' + (complete ? ' ok' : '');
+      const filled = Object.keys(itemData[i].slots).length;
+      statusEl.textContent = complete ? '✓ พร้อม' : `${filled}/6 รูป`;
+    }
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const name = document.getElementById('customerName').value;
+    const totalPhotos = Object.values(itemData).reduce((a, d) => a + Object.keys(d.slots).length, 0);
+    const readyCount = Array.from({length: itemCount}, (_, i) => i).filter(i => isItemComplete(i)).length;
+
+    document.getElementById('sumName').textContent = name || '—';
+    document.getElementById('sumCount').textContent = `${itemCount} ชิ้น`;
+    document.getElementById('sumPhotos').textContent = `${totalPhotos} รูป`;
+
+    const allReady = readyCount === itemCount;
+    const statusEl = document.getElementById('sumStatus');
+    statusEl.textContent = allReady ? `✓ ครบทุกชิ้น (${readyCount}/${itemCount})` : `${readyCount}/${itemCount} ชิ้นพร้อม`;
+    statusEl.className = 'summary-val ' + (allReady ? 'ok' : 'warn');
+
+    const hasCustomerInfo = ['customerName','customerEmail','customerPhone'].every(id => document.getElementById(id).value.trim());
+    document.getElementById('submitBtn').disabled = !(allReady && hasCustomerInfo);
+  }
+
+  // ========== R2 CONFIG ==========
+  const R2_ENDPOINT = 'https://ba3b8005c5fd656a730b132d4f462b6d.r2.cloudflarestorage.com';
+  const R2_BUCKET = 'roomly-assets';
+  const R2_PUBLIC_URL = 'https://pub-a7fe958bf4be418ab8b9189cdf76a855.r2.dev';
+  const R2_ACCESS_KEY = 'c1b2965e7418fe8cf65c38e5ab07e565';
+  const R2_SECRET_KEY = 'c8aee1f1f9f60a09d5e10894d6d1b92ea73a466b6d7fd47f0a625783cc822157';
+  const N8N_WEBHOOK = 'https://roomly.app.n8n.cloud/webhook/roomly-intake';
+  // ================================
+
+  async function signedUploadUrl(key, file) {
+    // Use AWS Signature V4 via fetch PUT directly to R2 S3-compatible endpoint
+    const url = `${R2_ENDPOINT}/${R2_BUCKET}/${key}`;
+    const date = new Date();
+    const dateStr = date.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+    const dateOnly = dateStr.slice(0,8);
+
+    // Build canonical request
+    const contentType = file.type || 'application/octet-stream';
+    const hashedPayload = 'UNSIGNED-PAYLOAD';
+    const headers = {
+      'host': `ba3b8005c5fd656a730b132d4f462b6d.r2.cloudflarestorage.com`,
+      'x-amz-content-sha256': hashedPayload,
+      'x-amz-date': dateStr,
+      'content-type': contentType,
+    };
+    const sortedKeys = Object.keys(headers).sort();
+    const canonicalHeaders = sortedKeys.map(k => `${k}:${headers[k]}`).join('\n') + '\n';
+    const signedHeadersStr = sortedKeys.join(';');
+    const canonicalRequest = [
+      'PUT', `/${R2_BUCKET}/${key}`, '',
+      canonicalHeaders, signedHeadersStr, hashedPayload
+    ].join('\n');
+
+    const credScope = `${dateOnly}/auto/s3/aws4_request`;
+    const encoder = new TextEncoder();
+
+    async function hmacSha256(key, data) {
+      const k = typeof key === 'string' ? encoder.encode(key) : key;
+      const cryptoKey = await crypto.subtle.importKey('raw', k, {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+      return new Uint8Array(await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(data)));
+    }
+    async function sha256hex(str) {
+      const buf = await crypto.subtle.digest('SHA-256', encoder.encode(str));
+      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+
+    const strToSign = ['AWS4-HMAC-SHA256', dateStr, credScope, await sha256hex(canonicalRequest)].join('\n');
+    const signingKey = await hmacSha256(
+      await hmacSha256(await hmacSha256(await hmacSha256(`AWS4${R2_SECRET_KEY}`, dateOnly), 'auto'), 's3'),
+      'aws4_request'
+    );
+    const sigBuf = await hmacSha256(signingKey, strToSign);
+    const signature = Array.from(sigBuf).map(b=>b.toString(16).padStart(2,'0')).join('');
+
+    const authHeader = `AWS4-HMAC-SHA256 Credential=${R2_ACCESS_KEY}/${credScope}, SignedHeaders=${signedHeadersStr}, Signature=${signature}`;
+
+    return { url, authHeader, contentType, dateStr, hashedPayload };
+  }
+
+  async function uploadFileToR2(jobId, itemIndex, angleKey, file) {
+    const ext = file.name.split('.').pop() || 'jpg';
+    const key = `jobs/${jobId}/item${itemIndex+1}_${angleKey}.${ext}`;
+    const { url, authHeader, contentType, dateStr, hashedPayload } = await signedUploadUrl(key, file);
+
+    const resp = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': authHeader,
+        'x-amz-date': dateStr,
+        'x-amz-content-sha256': hashedPayload,
+        'Content-Type': contentType,
+      },
+      body: file
+    });
+    if (!resp.ok) throw new Error(`Upload failed: ${resp.status} ${await resp.text()}`);
+    return `${R2_PUBLIC_URL}/${key}`;
+  }
+
+  function showProgress(msg, pct) {
+    let bar = document.getElementById('uploadProgress');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'uploadProgress';
+      bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--text1);padding:16px 24px;display:flex;align-items:center;gap:16px;';
+      bar.innerHTML = `<div style="flex:1"><div style="color:var(--cream);font-size:13px;margin-bottom:6px;" id="upMsg"></div><div style="background:rgba(255,255,255,0.1);border-radius:4px;height:4px;"><div id="upBar" style="height:4px;background:var(--accent-light);border-radius:4px;transition:width 0.3s;width:0%"></div></div></div>`;
+      document.body.prepend(bar);
+    }
+    document.getElementById('upMsg').textContent = msg;
+    document.getElementById('upBar').style.width = pct + '%';
+  }
+
+  async function handleSubmit() {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ กำลังอัปโหลด...';
+
+    const jobId = 'RM-' + new Date().toISOString().replace(/[-T:.Z]/g,'').slice(0,14);
+
+    try {
+      // Count total files
+      let totalFiles = 0;
+      for (let i = 0; i < itemCount; i++) totalFiles += Object.keys(itemData[i].slots).length;
+      let uploaded = 0;
+
+      // Upload all files to R2
+      const itemUrls = [];
+      for (let i = 0; i < itemCount; i++) {
+        const urls = {};
+        for (const [angleKey, file] of Object.entries(itemData[i].slots)) {
+          showProgress(`อัปโหลดรูป ${uploaded+1}/${totalFiles} — ${itemData[i].name || 'ชิ้นที่ '+(i+1)}`, Math.round(uploaded/totalFiles*80));
+          urls[angleKey] = await uploadFileToR2(jobId, i, angleKey, file);
+          uploaded++;
+        }
+        itemUrls.push(urls);
+      }
+
+      showProgress('ส่งข้อมูลไปยัง Roomly...', 90);
+
+      // Send to n8n webhook
+      const payload = {
+        job_id: jobId,
+        submitted_at: new Date().toISOString(),
+        customer: {
+          name: document.getElementById('customerName').value,
+          email: document.getElementById('customerEmail').value,
+          phone: document.getElementById('customerPhone').value,
+        },
+        item_count: itemCount,
+        items: Array.from({length: itemCount}, (_, i) => ({
+          index: i + 1,
+          name: itemData[i].name,
+          type: itemData[i].type,
+          note: itemData[i].note,
+          attachment_url: itemUrls[i]['front'] || Object.values(itemUrls[i])[0],
+          all_urls: itemUrls[i],
+        }))
+      };
+
+      const webhookResp = await fetch(N8N_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      showProgress('เสร็จแล้ว! ✓', 100);
+      setTimeout(() => { const b = document.getElementById('uploadProgress'); if(b) b.remove(); }, 1500);
+
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('jobIdDisplay').textContent = jobId;
+      const s = document.getElementById('successScreen');
+      s.classList.add('show');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+
+    } catch(err) {
+      console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '📤 ส่งรูปสินค้า';
+      const b = document.getElementById('uploadProgress'); if(b) b.remove();
+      alert('เกิดข้อผิดพลาด: ' + err.message + '\nกรุณาลองใหม่อีกครั้ง');
+    }
+  }
+
+  // Init
+  renderItems();
+  updateSummary();
+
+  // Live summary update on customer fields
+  ['customerName','customerEmail','customerPhone'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSummary);
+  });
+</script>
+</body>
+</html>
